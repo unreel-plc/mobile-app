@@ -1,4 +1,4 @@
-rootProject.name = "forreal"
+rootProject.name = "unreel"
 enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
 
 pluginManagement {

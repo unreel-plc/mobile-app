@@ -13,8 +13,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import forreal.composeapp.generated.resources.Res
-import forreal.composeapp.generated.resources.android_neutral_rd_na
+import unreel.composeapp.generated.resources.Res
+import unreel.composeapp.generated.resources.android_neutral_rd_na
 import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.DrawableResource
 import org.jetbrains.compose.resources.painterResource
