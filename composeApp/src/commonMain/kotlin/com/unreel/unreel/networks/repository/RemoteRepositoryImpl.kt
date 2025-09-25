@@ -228,12 +228,13 @@ class RemoteRepositoryImpl(
     }
 
     override suspend fun getDownloadDetail(id: String): Resource<DownloadItem> {
-        return requestInvoker {
-            api.getOneDownload(
-                getAccessToken(),
-                id,
-            )
-        }
+        TODO("not implemented")
+//        return requestInvoker {
+//            api.getOneDownload(
+//                getAccessToken(),
+//                id,
+//            )
+//        }
     }
 
     override suspend fun getCategories(): Resource<GetCategoriesResponse> {
