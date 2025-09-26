@@ -8,23 +8,23 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class GetDownloadsResponse(
     @SerialName("limit")
-    val limit: Int,
+    val limit: Int = 0,
     @SerialName("page")
-    val page: Int,
+    val page: Int = 0,
     @SerialName("results")
-    val results: List<DownloadItem>,
+    val results: List<DownloadItem> = emptyList(),
     @SerialName("total")
-    val total: Int
+    val total: Int = 0
 ): BaseResponse
 
 @Serializable
 data class DownloadItem(
     @SerialName("categories")
-    val categories: List<String>,
+    val categories: List<String> = emptyList(),
     @SerialName("categorizationNotes")
-    val categorizationNotes: String,
+    val categorizationNotes: String = "",
     @SerialName("categoryConfidence")
-    val categoryConfidence: Double,
+    val categoryConfidence: Double = 0.0,
     @SerialName("channel")
     val channel: String,
     @SerialName("channelFollowerCount")
@@ -38,7 +38,7 @@ data class DownloadItem(
     @SerialName("duration")
     val duration: Int,
     @SerialName("flashcardSummary")
-    val flashcardSummary: String,
+    val flashcardSummary: String = "",
     @SerialName("_id")
     val id: String,
     @SerialName("likeCount")
@@ -54,9 +54,9 @@ data class DownloadItem(
     @SerialName("status")
     val status: String,
     @SerialName("tags")
-    val tags: List<String>,
+    val tags: List<String> = emptyList(),
     @SerialName("taxonomyVersion")
-    val taxonomyVersion: String,
+    val taxonomyVersion: String = "",
     @SerialName("thumbnail")
     val thumbnail: String,
     @SerialName("title")

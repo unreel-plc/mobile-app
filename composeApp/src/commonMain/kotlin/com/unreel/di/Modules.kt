@@ -54,15 +54,7 @@ val networkModule = module {
     single<HttpClient> {
         HttpClient {
             install(ContentNegotiation) {
-                json(
-                    Json {
-                        prettyPrint = true
-                        isLenient = true
-                        ignoreUnknownKeys = true
-                        encodeDefaults = true
-                        coerceInputValues = true
-                    }
-                )
+                json(get<Json>()) // Use the singleton Json instance
             }
             install(Logging) {
                 logger = Logger.DEFAULT
