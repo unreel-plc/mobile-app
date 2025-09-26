@@ -77,20 +77,23 @@ class LoginViewModel(
     private fun googleLogin(token: String) = intent {
         when (val response = remoteRepository.login(token)) {
             is Resource.Success -> {
+                println("Hello, Response  is ${response.data}")
                 val token = response.data!!.token ?: ""
                 runBlocking {
                     offlineRepository.setAccessToken(token)
                 }
 
-                reduce {
+                /*reduce {
                     state.copy(
                         user = response.data.user,
                     )
-                }
+                }*/
                 postSideEffect(Event.NavigateToDashboard)
             }
 
             is Resource.Error -> {
+                println("Hello, Error  is ${response.data.toString()}")
+
                 reduce {
                     state.copy(
                         error = response.data.toString()

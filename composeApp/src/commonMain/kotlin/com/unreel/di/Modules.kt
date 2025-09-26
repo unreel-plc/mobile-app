@@ -54,7 +54,15 @@ val networkModule = module {
     single<HttpClient> {
         HttpClient {
             install(ContentNegotiation) {
-                json(get<Json>())
+                json(
+                    Json {
+                        prettyPrint = true
+                        isLenient = true
+                        ignoreUnknownKeys = true
+                        encodeDefaults = true
+                        coerceInputValues = true
+                    }
+                )
             }
             install(Logging) {
                 logger = Logger.DEFAULT

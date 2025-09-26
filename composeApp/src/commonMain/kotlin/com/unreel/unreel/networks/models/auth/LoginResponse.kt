@@ -8,6 +8,7 @@ import kotlinx.serialization.Serializable
 data class LoginResponse(
     @SerialName("token")
     val token: String? = null,
+
     @SerialName("user")
     val user: UserModel? = null
 ) : BaseResponse

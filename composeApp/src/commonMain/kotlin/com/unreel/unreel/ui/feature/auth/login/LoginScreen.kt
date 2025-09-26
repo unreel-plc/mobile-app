@@ -1,6 +1,7 @@
 package com.unreel.unreel.ui.feature.auth.login
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -110,11 +111,16 @@ fun LoginScreenContent(
                 )
                 .padding(6.dp)
         )
-        
+
+
         Column(
             modifier = Modifier
                 .padding(top = 50.dp)
-                .offset(y = (85).dp, x = 40.dp),
+                .offset(y = (85).dp, x = 40.dp)
+                .clickable {
+                    println("Hello, I am getting clicked")
+                    onAction(Action.OnSendHello)
+                },
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Icon(

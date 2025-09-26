@@ -23,8 +23,6 @@ class ShareReceiverActivity : ComponentActivity() {
             runBlocking {
                 val token = offlineRepository.getAccessToken().firstOrNull()
 
-
-
                 if (token.isNullOrEmpty() || shared.text.isNullOrEmpty()) {
                     return@runBlocking
                 }

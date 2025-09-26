@@ -15,6 +15,3 @@ data class GetTagsResponse(
 data class GetCategoriesResponse(
     val categories: List<Category>
 ) : BaseResponse
-
-
-

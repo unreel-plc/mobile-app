@@ -19,7 +19,7 @@ import kotlinx.coroutines.runBlocking
 import org.koin.android.ext.android.inject
 
 val START_DESTINATION = NavScreenGraph.LoginScreen.route
-val LOGGED_IN_START_DESTINATION = NavScreenGraph.LoginScreen.route
+val LOGGED_IN_START_DESTINATION = NavScreenGraph.MainScreen.route
 val LOGGED_OUT_START_DESTINATION = NavScreenGraph.LoginScreen.route
 
 class MainActivity : ComponentActivity() {

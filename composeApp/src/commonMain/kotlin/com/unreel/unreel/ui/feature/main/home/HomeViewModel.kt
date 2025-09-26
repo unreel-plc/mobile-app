@@ -1,7 +1,9 @@
 package com.unreel.unreel.ui.feature.main.home
 
 import com.unreel.unreel.core.common.TsmActionViewModel
+import com.unreel.unreel.core.common.utils.Resource
 import com.unreel.unreel.core.datastore.OfflineRepository
+import com.unreel.unreel.networks.models.auth.DownloadItem
 import com.unreel.unreel.networks.repository.RemoteRepository
 import org.orbitmvi.orbit.ContainerHost
 import org.orbitmvi.orbit.viewmodel.container
@@ -14,10 +16,39 @@ class HomeViewModel(
     override val container = container<State, Event>(
         initialState = State(),
         buildSettings = {}
-    ) {}
+    ) {
+        getDownloadedItems()
+    }
 
     override fun onAction(action: Action) {
+        when (action) {
+            is Action.OnCategorySelected -> {
+                getDownloadedItems()
+            }
+            else -> {
 
+            }
+        }
+    }
+
+    fun getDownloadedItems() = intent {
+        when (val response = remoteRepository.getDownloads()) {
+            is Resource.Success -> {
+                println("Home Screen, ${response.data}")
+                reduce {
+                    state.copy(
+                        downloadedItems = response.data?.results ?: emptyList()
+                    )
+                }
+            }
+            is Resource.Error -> {
+                println("Home Screen, ${response.message}")
+
+                state.copy(
+                    error = response.message
+                )
+            }
+        }
     }
 }
 
@@ -26,8 +57,11 @@ data class State(
     val searchQuery: String = "",
     val selectedCategory: String = "Shorts",
     val contentItems: List<ContentItem> = emptyList(),
+    val downloadedItems: List<DownloadItem> = emptyList(),
     val isLoading: Boolean = false,
-    val isDarkTheme: Boolean = true
+    val isDarkTheme: Boolean = true,
+
+    val error: String? = null,
 )
 
 data class ContentItem(

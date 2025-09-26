@@ -99,6 +99,7 @@ class RemoteRepositoryImpl(
         try {
 
             val response = invoke()
+            println("Home Screen, Response is ${response}")
             return Resource.Success(response)
             /*println("REQUEST_INVOKER: Response received - Status: ${response.statusCode}, Message: ${response.message}")
 

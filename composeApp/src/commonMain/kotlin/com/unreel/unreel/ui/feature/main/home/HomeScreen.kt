@@ -34,6 +34,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import coil3.compose.AsyncImage
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.unreel.unreel.networks.models.auth.DownloadItem
 import com.unreel.unreel.ui.theme.unreelTheme
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import org.koin.compose.viewmodel.koinViewModel
@@ -125,7 +126,7 @@ fun HomeScreen(
                 horizontalArrangement = Arrangement.spacedBy(8.dp),
                 verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
-                items(sampleContent) { content ->
+                items(state.downloadedItems) { content ->
                     ContentCard(
                         content = content,
                         onClick = { onAction(Action.OnContentClicked(content.id)) }
@@ -236,7 +237,7 @@ fun CategoryChip(
 
 @Composable
 fun ContentCard(
-    content: ContentItem,
+    content: DownloadItem,
     onClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -249,7 +250,7 @@ fun ContentCard(
     ) {
         // Background image
         AsyncImage(
-            model = if (content.thumbnailUrl.isNotEmpty()) content.thumbnailUrl else "https://i.ytimg.com/vi/-l8CmiKn8jc/maxresdefault.jpg",
+            model = content.thumbnail.ifEmpty { "https://i.ytimg.com/vi/-l8CmiKn8jc/maxresdefault.jpg" },
             contentDescription = content.title,
             modifier = Modifier.fillMaxSize(),
             contentScale = ContentScale.Crop
@@ -281,7 +282,7 @@ fun ContentCard(
                     .padding(horizontal = 6.dp, vertical = 2.dp)
             ) {
                 Text(
-                    text = duration,
+                    text = duration.toString(),
                     color = Color.White,
                     fontSize = 12.sp,
                     fontWeight = FontWeight.Medium
@@ -311,7 +312,7 @@ fun ContentCard(
 
             // Creator name
             Text(
-                text = content.creator,
+                text = content.channel,
                 color = Color.White.copy(alpha = 0.9f),
                 fontSize = 12.sp,
                 fontWeight = FontWeight.Normal
@@ -337,7 +338,7 @@ fun ContentCard(
                     )
                     Spacer(modifier = Modifier.width(4.dp))
                     Text(
-                        text = content.viewCount,
+                        text = content.viewCount.toString(),
                         color = Color.White,
                         fontSize = 12.sp,
                         fontWeight = FontWeight.Normal
