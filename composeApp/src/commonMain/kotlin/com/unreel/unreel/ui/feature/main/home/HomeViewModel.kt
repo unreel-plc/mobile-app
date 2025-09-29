@@ -64,7 +64,7 @@ class HomeViewModel(
 data class State(
     val username: String? = null,
     val searchQuery: String = "",
-    val selectedCategory: String = "Shorts",
+    val selectedCategory: String = "",
     val contentItems: List<ContentItem> = emptyList(),
     val downloadedItems: List<DownloadItem> = emptyList(),
     val isLoading: Boolean = false,

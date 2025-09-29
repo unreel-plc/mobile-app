@@ -1,36 +1,69 @@
 package com.unreel.core.activies
 
+import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
+import androidx.work.CoroutineWorker
+import androidx.work.OneTimeWorkRequestBuilder
+import androidx.work.WorkManager
+import androidx.work.WorkerParameters
+import androidx.work.workDataOf
 import com.unreel.unreel.core.datastore.OfflineRepository
 import com.unreel.unreel.core.shares.ShareHandler
 import com.unreel.unreel.networks.repository.RemoteRepository
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.runBlocking
 import org.koin.android.ext.android.inject
+import org.koin.compose.getKoin
+import org.koin.core.context.GlobalContext
+import kotlin.getValue
 
 class ShareReceiverActivity : ComponentActivity() {
-    private val offlineRepository: OfflineRepository by inject()
-    private val remoteRepository: RemoteRepository by inject()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        val handler = ShareHandler(this)
+        if (intent?.action == Intent.ACTION_SEND && intent.type == "text/plain") {
+            val sharedText = intent.getStringExtra(Intent.EXTRA_TEXT)
 
-        handler.handleSharedContent { shared ->
-            var token: String? = null;
-            runBlocking {
-                val token = offlineRepository.getAccessToken().firstOrNull()
+            if (!sharedText.isNullOrEmpty()) {
+                val work = OneTimeWorkRequestBuilder<ShareWorker>()
+                    .setInputData(
+                        workDataOf("shared_text" to sharedText)
+                    )
+                    .build()
 
-                if (token.isNullOrEmpty() || shared.text.isNullOrEmpty()) {
-                    return@runBlocking
-                }
+                WorkManager.getInstance(this).enqueue(work)
+            }
+        }
 
-                remoteRepository.detect(shared.text)
+        finish()
+    }
+}
+
+class ShareWorker(
+    appContext: Context,
+    workerParams: WorkerParameters
+) : CoroutineWorker(appContext, workerParams) {
+
+
+    private val offlineRepository: OfflineRepository = GlobalContext.get().get()
+    private val remoteRepository: RemoteRepository = GlobalContext.get().get()
+
+    override suspend fun doWork(): Result {
+        val sharedText = inputData.getString("shared_text") ?: return Result.failure()
+
+        return try {
+            val token = offlineRepository.getAccessToken().firstOrNull()
+
+            if (!token.isNullOrEmpty()) {
+                remoteRepository.detect(sharedText)
             }
 
-            finish()
+            Result.success()
+        } catch (e: Exception) {
+            Result.retry()
         }
     }
 }

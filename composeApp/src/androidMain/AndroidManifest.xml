@@ -27,8 +27,13 @@
             </intent-filter>
         </activity>
 
-        <activity android:name="com.unreel.core.activies.ShareReceiverActivity"
-            android:exported="true">
+        <activity
+            android:name="com.unreel.core.activies.ShareReceiverActivity"
+            android:exported="true"
+            android:theme="@style/Theme.Transparent"
+            android:excludeFromRecents="true"
+            android:finishOnTaskLaunch="true">
+
             <intent-filter>
                 <action android:name="android.intent.action.SEND" />
                 <category android:name="android.intent.category.DEFAULT" />

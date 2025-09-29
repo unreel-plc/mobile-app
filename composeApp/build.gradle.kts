@@ -52,6 +52,9 @@ kotlin {
             implementation("androidx.credentials:credentials-play-services-auth:1.5.0")
             implementation("com.google.android.libraries.identity.googleid:googleid:1.1.1")
 
+            implementation("androidx.work:work-runtime-ktx:2.9.0")
+
+            implementation("io.insert-koin:koin-androidx-workmanager:3.5.6")
         }
         iosMain.dependencies {
             implementation(libs.ktor.client.darwin)
