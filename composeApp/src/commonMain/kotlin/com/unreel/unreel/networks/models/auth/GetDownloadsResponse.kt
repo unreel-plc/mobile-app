@@ -15,7 +15,7 @@ data class GetDownloadsResponse(
     val results: List<DownloadItem> = emptyList(),
     @SerialName("total")
     val total: Int = 0
-): BaseResponse
+) : BaseResponse
 
 @Serializable
 data class DownloadItem(
@@ -26,55 +26,55 @@ data class DownloadItem(
     @SerialName("categoryConfidence")
     val categoryConfidence: Double = 0.0,
     @SerialName("channel")
-    val channel: String,
+    val channel: String? = null,
     @SerialName("channelFollowerCount")
-    val channelFollowerCount: Int,
+    val channelFollowerCount: Int? = null,
     @SerialName("commentCount")
-    val commentCount: Int,
+    val commentCount: Int? = null,
     @SerialName("createdAt")
-    val createdAt: String,
+    val createdAt: String? = null,
     @SerialName("description")
-    val description: String,
+    val description: String? = null,
     @SerialName("duration")
-    val duration: Int,
+    val duration: String? = null,
     @SerialName("flashcardSummary")
     val flashcardSummary: String = "",
     @SerialName("_id")
-    val id: String,
+    val id: String? = null,
     @SerialName("likeCount")
-    val likeCount: Int,
+    val likeCount: Int? = null,
     @SerialName("link")
-    val link: String,
+    val link: String? = null,
     @SerialName("metadataPath")
-    val metadataPath: String,
+    val metadataPath: String? = null,
     @SerialName("platform")
-    val platform: String,
+    val platform: String? = null,
     @SerialName("progressPercent")
-    val progressPercent: Int,
+    val progressPercent: Int? = null,
     @SerialName("status")
-    val status: String,
+    val status: String? = null,
     @SerialName("tags")
     val tags: List<String> = emptyList(),
     @SerialName("taxonomyVersion")
     val taxonomyVersion: String = "",
     @SerialName("thumbnail")
-    val thumbnail: String,
+    val thumbnail: String? = null,
     @SerialName("title")
-    val title: String,
+    val title: String? = null,
     @SerialName("transcriptText")
-    val transcriptText: String,
+    val transcriptText: String? = null,
     @SerialName("updatedAt")
-    val updatedAt: String,
+    val updatedAt: String? = null,
     @SerialName("uploadDate")
-    val uploadDate: String,
+    val uploadDate: String? = null,
     @SerialName("uploaderUrl")
-    val uploaderUrl: String,
+    val uploaderUrl: String? = null,
     @SerialName("__v")
-    val v: Int,
+    val v: Int? = null,
     @SerialName("videoId")
-    val videoId: String,
+    val videoId: String? = null,
     @SerialName("viewCount")
-    val viewCount: Int,
+    val viewCount: Int? = null,
     @SerialName("youtubeSubtitleSrtPath")
-    val youtubeSubtitleSrtPath: String
-): BaseResponse
+    val youtubeSubtitleSrtPath: String? = null,
+) : BaseResponse

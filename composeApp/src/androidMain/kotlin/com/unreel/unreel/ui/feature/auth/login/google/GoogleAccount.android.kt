@@ -52,7 +52,7 @@ actual class GoogleAuthUiProvider(
         .setFilterByAuthorizedAccounts(false)
         .setAutoSelectEnabled(true)
 //        .setServerClientId("917081041094-f1qu5a9sdkpbjrcijsumovt3klf5jp5r.apps.googleusercontent.com")
-        .setServerClientId("917081041094-3lms4rjpnon0c8orjt0l8f6b32ddk8sv.apps.googleusercontent.com") // TODO: jossephus: DONT HARDCODE THIS :-)
+        .setServerClientId("212436644667-pulm6n91p0e7v9p6c5hfr57j8pdfb6gb.apps.googleusercontent.com") // TODO: jossephus: DONT HARDCODE THIS :-)
         .build()
 }
 

@@ -34,6 +34,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import coil3.compose.AsyncImage
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.unreel.unreel.core.common.utils.Constants.BASE_URL_IMAGE
 import com.unreel.unreel.networks.models.auth.DownloadItem
 import com.unreel.unreel.ui.theme.unreelTheme
 import org.jetbrains.compose.ui.tooling.preview.Preview
@@ -129,7 +130,7 @@ fun HomeScreen(
                 items(state.downloadedItems) { content ->
                     ContentCard(
                         content = content,
-                        onClick = { onAction(Action.OnContentClicked(content.id)) }
+                        onClick = { if (content.id != null) onAction(Action.OnContentClicked(content.id)) }
                     )
                 }
             }
@@ -174,7 +175,7 @@ fun SearchBar(
             decorationBox = { innerTextField ->
                 if (searchQuery.isEmpty()) {
                     Text(
-                        text = "Search videos, tags, creators...",
+                        text = "Search videos, tags, ...",
                         color = Color.Gray,
                         fontSize = 16.sp
                     )
@@ -250,7 +251,7 @@ fun ContentCard(
     ) {
         // Background image
         AsyncImage(
-            model = content.thumbnail.ifEmpty { "https://i.ytimg.com/vi/-l8CmiKn8jc/maxresdefault.jpg" },
+            model = BASE_URL_IMAGE +  content.thumbnail?.ifEmpty { "https://i.ytimg.com/vi/-l8CmiKn8jc/maxresdefault.jpg" },
             contentDescription = content.title,
             modifier = Modifier.fillMaxSize(),
             contentScale = ContentScale.Crop
@@ -299,7 +300,7 @@ fun ContentCard(
         ) {
             // Title
             Text(
-                text = content.title,
+                text = content?.title ?: "",
                 color = Color.White,
                 fontSize = 14.sp,
                 fontWeight = FontWeight.Medium,
@@ -312,7 +313,7 @@ fun ContentCard(
 
             // Creator name
             Text(
-                text = content.channel,
+                text = content?.channel ?: "",
                 color = Color.White.copy(alpha = 0.9f),
                 fontSize = 12.sp,
                 fontWeight = FontWeight.Normal
