@@ -6,7 +6,6 @@ import com.unreel.unreel.networks.ApiInterface
 import com.unreel.unreel.networks.RefreshBody
 import com.unreel.unreel.networks.models.BaseResponse
 import com.unreel.unreel.networks.models.ErrorResponse
-import com.unreel.unreel.networks.models.auth.DetectLinkResponse
 import com.unreel.unreel.networks.models.auth.DetectResponse
 import com.unreel.unreel.networks.models.auth.DownloadItem
 import com.unreel.unreel.networks.models.auth.EngineDetectBody
@@ -229,13 +228,12 @@ class RemoteRepositoryImpl(
     }
 
     override suspend fun getDownloadDetail(id: String): Resource<DownloadItem> {
-        TODO("not implemented")
-//        return requestInvoker {
-//            api.getOneDownload(
-//                getAccessToken(),
-//                id,
-//            )
-//        }
+        return requestInvoker {
+            api.getOneDownload(
+                getAccessToken(),
+                id,
+            )
+        }
     }
 
     override suspend fun getCategories(): Resource<GetCategoriesResponse> {

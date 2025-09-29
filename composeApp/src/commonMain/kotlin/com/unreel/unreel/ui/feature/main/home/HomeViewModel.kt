@@ -25,6 +25,12 @@ class HomeViewModel(
             is Action.OnCategorySelected -> {
                 getDownloadedItems()
             }
+            is Action.OnContentClicked -> intent {
+                postSideEffect(Event.GoToDownloadDetail(action.contentId))
+            }
+            is Action.OnRefresh -> intent {
+                getDownloadedItems()
+            }
             else -> {
 
             }
@@ -32,12 +38,14 @@ class HomeViewModel(
     }
 
     fun getDownloadedItems() = intent {
+        reduce { state.copy(isLoading = true)}
         when (val response = remoteRepository.getDownloads()) {
             is Resource.Success -> {
                 println("Home Screen, ${response.data}")
                 reduce {
                     state.copy(
-                        downloadedItems = response.data?.results ?: emptyList()
+                        downloadedItems = response.data?.results ?: emptyList(),
+                        isLoading = false
                     )
                 }
             }
@@ -45,7 +53,8 @@ class HomeViewModel(
                 println("Home Screen, ${response.message}")
 
                 state.copy(
-                    error = response.message
+                    error = response.message,
+                    isLoading = false
                 )
             }
         }
@@ -80,8 +89,10 @@ sealed interface Action {
     data class OnContentClicked(val contentId: String) : Action
     data object OnSearchClicked : Action
     data object OnThemeToggleClicked : Action
+
+    object OnRefresh: Action
 }
 
 sealed interface Event {
-
+    data class GoToDownloadDetail(val id: String): Event
 }

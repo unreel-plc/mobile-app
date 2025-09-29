@@ -22,6 +22,9 @@ import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Verified
 import androidx.compose.material3.*
+import androidx.compose.material3.pulltorefresh.PullToRefreshDefaults
+import androidx.compose.material3.pulltorefresh.pullToRefresh
+import androidx.compose.material3.pulltorefresh.rememberPullToRefreshState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -34,7 +37,11 @@ import androidx.compose.ui.text.style.TextOverflow
 import coil3.compose.AsyncImage
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.zIndex
+import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
 import com.unreel.unreel.core.common.utils.Constants.BASE_URL_IMAGE
+import com.unreel.unreel.core.navigation.NavScreenGraph
 import com.unreel.unreel.networks.models.auth.DownloadItem
 import com.unreel.unreel.ui.theme.unreelTheme
 import org.jetbrains.compose.ui.tooling.preview.Preview
@@ -43,11 +50,16 @@ import org.orbitmvi.orbit.compose.collectAsState
 import org.orbitmvi.orbit.compose.collectSideEffect
 
 @Composable
-fun HomeScreen() {
+fun HomeScreen(
+    navConroller: NavController = rememberNavController()
+) {
     val viewModel = koinViewModel<HomeViewModel>()
     val state by viewModel.collectAsState()
     viewModel.collectSideEffect {
         when (it) {
+            is Event.GoToDownloadDetail -> {
+                navConroller.navigate(NavScreenGraph.DownloadDetailScreen.route + "/${it.id}")
+            }
             else -> {}
         }
     }
@@ -58,6 +70,7 @@ fun HomeScreen() {
     )
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreen(
     state: State = State(),
@@ -70,7 +83,7 @@ fun HomeScreen(
     val darkOnBackground = Color(0xFFE0E0E0)
 
     val categories = listOf("Shorts", "Reels", "TikTok", "Comedy", "Entertainment")
-    val sampleContent = getSampleContent()
+    val pullToRefreshState = rememberPullToRefreshState()
 
     Scaffold(
         bottomBar = {
@@ -78,60 +91,85 @@ fun HomeScreen(
         },
         containerColor = darkBackground
     ) { paddingValues ->
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .background(darkBackground)
-                .padding(paddingValues)
+        Box(
+            modifier =
+                Modifier.fillMaxSize()
+                    .pullToRefresh(
+                        isRefreshing = state.isLoading,
+                        state = pullToRefreshState,
+                        enabled = true,
+                        onRefresh = { onAction(Action.OnRefresh) },
+                    )
         ) {
-            Spacer(modifier = Modifier.height(8.dp))
-
-            Row(
+            PullToRefreshDefaults.Indicator(
+                modifier = Modifier.padding(paddingValues).align(Alignment.TopCenter).zIndex(1f),
+                isRefreshing = state.isLoading,
+                state = pullToRefreshState,
+                containerColor = MaterialTheme.colorScheme.surfaceVariant,
+                color = MaterialTheme.colorScheme.primary,
+            )
+            Column(
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 16.dp, vertical = 8.dp),
-                horizontalArrangement = Arrangement.spacedBy(12.dp),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                SearchBar(
-                    searchQuery = state.searchQuery,
-                    onSearchQueryChanged = { onAction(Action.OnSearchQueryChanged(it)) },
-                    onSearchClicked = { onAction(Action.OnSearchClicked) },
-                    modifier = Modifier.weight(1f)
-                )
+                    .fillMaxSize()
 
-                ThemeToggleButton(
-                    isDarkTheme = state.isDarkTheme,
-                    onToggle = { onAction(Action.OnThemeToggleClicked) }
-                )
-            }
-
-            LazyRow(
-                modifier = Modifier.padding(vertical = 8.dp),
-                contentPadding = PaddingValues(horizontal = 16.dp),
-                horizontalArrangement = Arrangement.spacedBy(8.dp)
+                    .background(darkBackground)
+                    .padding(paddingValues)
             ) {
-                items(categories) { category ->
-                    CategoryChip(
-                        text = category,
-                        isSelected = category == state.selectedCategory,
-                        onClick = { onAction(Action.OnCategorySelected(category)) }
+                Spacer(modifier = Modifier.height(8.dp))
+
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 16.dp, vertical = 8.dp),
+                    horizontalArrangement = Arrangement.spacedBy(12.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    SearchBar(
+                        searchQuery = state.searchQuery,
+                        onSearchQueryChanged = { onAction(Action.OnSearchQueryChanged(it)) },
+                        onSearchClicked = { onAction(Action.OnSearchClicked) },
+                        modifier = Modifier.weight(1f)
+                    )
+
+                    ThemeToggleButton(
+                        isDarkTheme = state.isDarkTheme,
+                        onToggle = { onAction(Action.OnThemeToggleClicked) }
                     )
                 }
-            }
 
-            LazyVerticalGrid(
-                columns = GridCells.Fixed(2),
-                modifier = Modifier.fillMaxSize(),
-                contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp),
-                horizontalArrangement = Arrangement.spacedBy(8.dp),
-                verticalArrangement = Arrangement.spacedBy(8.dp)
-            ) {
-                items(state.downloadedItems) { content ->
-                    ContentCard(
-                        content = content,
-                        onClick = { if (content.id != null) onAction(Action.OnContentClicked(content.id)) }
-                    )
+                LazyRow(
+                    modifier = Modifier.padding(vertical = 8.dp),
+                    contentPadding = PaddingValues(horizontal = 16.dp),
+                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    items(categories) { category ->
+                        CategoryChip(
+                            text = category,
+                            isSelected = category == state.selectedCategory,
+                            onClick = { onAction(Action.OnCategorySelected(category)) }
+                        )
+                    }
+                }
+
+                LazyVerticalGrid(
+                    columns = GridCells.Fixed(2),
+                    modifier = Modifier.fillMaxSize(),
+                    contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp),
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                    verticalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    items(state.downloadedItems) { content ->
+                        ContentCard(
+                            content = content,
+                            onClick = {
+                                if (content.id != null) onAction(
+                                    Action.OnContentClicked(
+                                        content.id
+                                    )
+                                )
+                            }
+                        )
+                    }
                 }
             }
         }
@@ -175,7 +213,7 @@ fun SearchBar(
             decorationBox = { innerTextField ->
                 if (searchQuery.isEmpty()) {
                     Text(
-                        text = "Search videos, tags, ...",
+                        text = "Search videos, tags...",
                         color = Color.Gray,
                         fontSize = 16.sp
                     )
@@ -236,6 +274,26 @@ fun CategoryChip(
     }
 }
 
+fun getPlatformIconUrl(channel: String): String {
+    return when {
+        channel.contains("youtube", ignoreCase = true) || 
+        channel.contains("yt", ignoreCase = true) ||
+        channel.contains("google", ignoreCase = true) -> "https://www.youtube.com/s/desktop/9b55e232/img/favicon_32x32.png"
+        
+        channel.contains("tiktok", ignoreCase = true) || 
+        channel.contains("tt", ignoreCase = true) -> "https://www.tiktok.com/favicon.ico"
+        
+        channel.contains("instagram", ignoreCase = true) || 
+        channel.contains("ig", ignoreCase = true) ||
+        channel.contains("insta", ignoreCase = true) -> "https://static.cdninstagram.com/rsrc.php/v4/yR/r/lam-fZmwmvn.png"
+        
+        channel.contains("facebook", ignoreCase = true) || 
+        channel.contains("fb", ignoreCase = true) -> "https://img.icons8.com/color/48/facebook-new.png"
+        
+        else -> "https://www.youtube.com/s/desktop/9b55e232/img/favicon_32x32.png" // Default to YouTube
+    }
+}
+
 @Composable
 fun ContentCard(
     content: DownloadItem,
@@ -251,7 +309,7 @@ fun ContentCard(
     ) {
         // Background image
         AsyncImage(
-            model = BASE_URL_IMAGE +  content.thumbnail?.ifEmpty { "https://i.ytimg.com/vi/-l8CmiKn8jc/maxresdefault.jpg" },
+            model = BASE_URL_IMAGE + (content.thumbnail?.ifEmpty { "https://i.ytimg.com/vi/-l8CmiKn8jc/maxresdefault.jpg" }),
             contentDescription = content.title,
             modifier = Modifier.fillMaxSize(),
             contentScale = ContentScale.Crop
@@ -273,23 +331,17 @@ fun ContentCard(
                 )
         )
 
-        // Duration overlay (top right)
-        content.duration?.let { duration ->
-            Box(
-                modifier = Modifier
-                    .align(Alignment.TopEnd)
-                    .padding(8.dp)
-                    .background(Color.Black.copy(alpha = 0.6f), RoundedCornerShape(4.dp))
-                    .padding(horizontal = 6.dp, vertical = 2.dp)
-            ) {
-                Text(
-                    text = duration.toString(),
-                    color = Color.White,
-                    fontSize = 12.sp,
-                    fontWeight = FontWeight.Medium
-                )
-            }
-        }
+        // Platform icon (bottom right)
+        AsyncImage(
+            model = getPlatformIconUrl(content.platform ?: ""),
+            contentDescription = "Platform icon",
+            modifier = Modifier
+                .align(Alignment.BottomEnd)
+                .padding(12.dp)
+                .size(24.dp)
+                .clip(RoundedCornerShape(4.dp))
+                .padding(2.dp)
+        )
 
         // Content info overlay at the bottom
         Column(
@@ -297,6 +349,7 @@ fun ContentCard(
                 .align(Alignment.BottomStart)
                 .fillMaxWidth()
                 .padding(12.dp)
+                .padding(end = 40.dp) // Add padding to avoid overlap with platform icon
         ) {
             // Title
             Text(
@@ -321,110 +374,35 @@ fun ContentCard(
 
             Spacer(modifier = Modifier.height(8.dp))
 
-            // Bottom controls
+            // View count with heart icon
             Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                // Like icon and count
-                Row(
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Icon(
-                        imageVector = Icons.Default.Favorite,
-                        contentDescription = "Likes",
-                        tint = Color.White,
-                        modifier = Modifier.size(16.dp)
-                    )
-                    Spacer(modifier = Modifier.width(4.dp))
-                    Text(
-                        text = content.viewCount.toString(),
-                        color = Color.White,
-                        fontSize = 12.sp,
-                        fontWeight = FontWeight.Normal
-                    )
-                }
-
-                // View button
-                Button(
-                    onClick = { onClick() },
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = Color.White,
-                        contentColor = Color.Black
-                    ),
-                    shape = RoundedCornerShape(16.dp),
-                    contentPadding = PaddingValues(horizontal = 12.dp, vertical = 4.dp),
-                    modifier = Modifier.height(28.dp)
-                ) {
-                    Text(
-                        text = "View",
-                        fontSize = 11.sp,
-                        fontWeight = FontWeight.Medium
-                    )
-                }
+                Icon(
+                    imageVector = Icons.Default.Favorite,
+                    contentDescription = "Views",
+                    tint = Color.White,
+                    modifier = Modifier.size(16.dp)
+                )
+                Spacer(modifier = Modifier.width(4.dp))
+                Text(
+                    text = formatViewCount(content.likeCount?.toString() ?: "0"),
+                    color = Color.White,
+                    fontSize = 12.sp,
+                    fontWeight = FontWeight.Normal
+                )
             }
         }
     }
 }
 
-fun getSampleContent(): List<ContentItem> {
-    return listOf(
-        ContentItem(
-            id = "1",
-            title = "Tyrion Confronts Tywin ...",
-            creator = "Ewan Edris",
-            thumbnailUrl = "https://i.ytimg.com/vi/-l8CmiKn8jc/maxresdefault.jpg",
-            viewCount = "2.1M",
-            duration = null,
-            isVerified = true
-        ),
-        ContentItem(
-            id = "2",
-            title = "Hikaru Nakamura. The p...",
-            creator = "matershell",
-            thumbnailUrl = "https://i.ytimg.com/vi/dQw4w9WgXcQ/maxresdefault.jpg",
-            viewCount = "256.5K",
-            duration = null,
-            isVerified = false
-        ),
-        ContentItem(
-            id = "3",
-            title = "Video by not.racist.meme...",
-            creator = "not.racist.memes",
-            thumbnailUrl = "https://i.ytimg.com/vi/jNQXAC9IVRw/maxresdefault.jpg",
-            viewCount = "1.2M",
-            duration = null,
-            isVerified = false
-        ),
-        ContentItem(
-            id = "4",
-            title = "New York is a Weird Plac...",
-            creator = "NewYork",
-            thumbnailUrl = "https://i.ytimg.com/vi/kJQP7kiw5Fk/maxresdefault.jpg",
-            viewCount = "892K",
-            duration = null,
-            isVerified = true
-        ),
-        ContentItem(
-            id = "5",
-            title = "Daily dose of comedy",
-            creator = "CompiKing",
-            thumbnailUrl = "https://i.ytimg.com/vi/9bZkp7q19f0/maxresdefault.jpg",
-            viewCount = "445K",
-            duration = null,
-            isVerified = true
-        ),
-        ContentItem(
-            id = "6",
-            title = "Internet wisdom compilation",
-            creator = "WiseGuy",
-            thumbnailUrl = "https://i.ytimg.com/vi/ScMzIvxBSi4/maxresdefault.jpg",
-            viewCount = "673K",
-            duration = null,
-            isVerified = false
-        )
-    )
+fun formatViewCount(viewCount: String): String {
+    val count = viewCount.replace("K", "").replace("M", "").replace(",", "").toIntOrNull() ?: 0
+    return when {
+        count >= 1000000 -> "${(count / 1000000.0).toString().take(3)}M"
+        count >= 1000 -> "${(count / 1000.0).toString().take(3)}K"
+        else -> viewCount
+    }
 }
 
 @Composable
@@ -498,10 +476,47 @@ fun HomeScreenPreview() {
             state = State(
                 searchQuery = "",
                 selectedCategory = "Shorts",
-                contentItems = getSampleContent(),
+                downloadedItems = getSampleContent(),
                 isDarkTheme = true
             ),
             onAction = {}
         )
     }
+}
+
+fun getSampleContent(): List<DownloadItem> {
+    return listOf(
+        DownloadItem(
+            id = "1",
+            title = "Dog Core Compilation",
+            channel = "dogs.loveru",
+            thumbnail = "https://i.ytimg.com/vi/-l8CmiKn8jc/maxresdefault.jpg",
+            viewCount = 163200,
+            duration = "0:45"
+        ),
+        DownloadItem(
+            id = "2",
+            title = "not gonna lie, it was very brilliant of leonard",
+            channel = "MoviesXSeriesClips",
+            thumbnail = "https://i.ytimg.com/vi/dQw4w9WgXcQ/maxresdefault.jpg",
+            viewCount = 247700,
+            duration = "1:23"
+        ),
+        DownloadItem(
+            id = "3",
+            title = "Day 60 of Women Being Women 😂",
+            channel = "srt__marrion",
+            thumbnail = "https://i.ytimg.com/vi/jNQXAC9IVRw/maxresdefault.jpg",
+            viewCount = 89000,
+            duration = "0:32"
+        ),
+        DownloadItem(
+            id = "4",
+            title = "Instagram Reel Content",
+            channel = "InstagramCreator",
+            thumbnail = "https://i.ytimg.com/vi/kJQP7kiw5Fk/maxresdefault.jpg",
+            viewCount = 152000,
+            duration = "0:28"
+        )
+    )
 }

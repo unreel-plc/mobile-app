@@ -21,6 +21,7 @@ import com.unreel.unreel.networks.createApiInterface
 import com.unreel.unreel.networks.repository.RemoteRepository
 import com.unreel.unreel.networks.repository.RemoteRepositoryImpl
 import com.unreel.unreel.ui.feature.main.home.HomeViewModel
+import com.unreel.unreel.ui.feature.main.home.download_detail.DownloadDetailViewModel
 import io.ktor.client.plugins.logging.DEFAULT
 import io.ktor.client.plugins.logging.LogLevel
 import io.ktor.client.plugins.logging.Logger
@@ -36,6 +37,7 @@ val sharedModule = module {
     viewModelOf(::MyViewModel)
     viewModelOf(::LoginViewModel)
     viewModelOf(::HomeViewModel)
+    viewModelOf(::DownloadDetailViewModel)
 }
 
 expect val loginPlatformModule: Module

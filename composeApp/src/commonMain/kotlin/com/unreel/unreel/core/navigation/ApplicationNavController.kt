@@ -15,6 +15,8 @@ import androidx.navigation.navArgument
 import com.unreel.unreel.ui.feature.auth.login.LoginScreen
 import com.unreel.unreel.ui.feature.auth.login.LoginViewModel
 import com.unreel.unreel.ui.feature.main.home.HomeScreen
+import com.unreel.unreel.ui.feature.main.home.download_detail.DownloadDetailScreen
+import com.unreel.unreel.ui.feature.main.home.download_detail.DownloadDetailViewModel
 import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
@@ -28,42 +30,67 @@ internal fun ApplicationNavController(
     LaunchedEffect(Unit) {
         onStart(navController)
     }
-        Surface(
-            modifier = Modifier.fillMaxSize(),
-            color = MaterialTheme.colorScheme.background
+    Surface(
+        modifier = Modifier.fillMaxSize(),
+        color = MaterialTheme.colorScheme.background
+    ) {
+        NavHost(
+            navController = navController,
+            startDestination = startDestination,
         ) {
-            NavHost(
-                navController = navController,
-                startDestination = startDestination,
+            composable(
+                NavScreenGraph.MainScreen.route
             ) {
-                composable(
-                    NavScreenGraph.MainScreen.route
-                ) {
-                    HomeScreen()
-                }
-
-                composable(
-                    NavScreenGraph.LoginScreen.argument,
-                    arguments = listOf(
-                        navArgument(NavScreenGraph.LoginScreen.argument0) {
-                            type = NavType.StringType
-                            nullable = true
-                            defaultValue = null
-
-                        }
-                    )
-                ) {
-                    val phoneNumber = it.arguments?.getString(NavScreenGraph.LoginScreen.argument0) ?: ""
-                    val viewModel = koinViewModel<LoginViewModel>()
-                    LaunchedEffect(phoneNumber) {
-                        if (phoneNumber.isNotEmpty()) {
-                            viewModel.setPhoneNumber(phoneNumber)
-                        }
-                    }
-                    LoginScreen(navController)
-                }
-
+                HomeScreen(
+                    navController
+                )
             }
+
+            composable(
+                NavScreenGraph.LoginScreen.argument,
+                arguments = listOf(
+                    navArgument(NavScreenGraph.LoginScreen.argument0) {
+                        type = NavType.StringType
+                        nullable = true
+                        defaultValue = null
+
+                    }
+                )
+            ) {
+                val phoneNumber =
+                    it.arguments?.getString(NavScreenGraph.LoginScreen.argument0) ?: ""
+                val viewModel = koinViewModel<LoginViewModel>()
+                LaunchedEffect(phoneNumber) {
+                    if (phoneNumber.isNotEmpty()) {
+                        viewModel.setPhoneNumber(phoneNumber)
+                    }
+                }
+                LoginScreen(navController)
+            }
+
+            composable(
+                NavScreenGraph.DownloadDetailScreen.argument,
+                arguments = listOf(
+                    navArgument(NavScreenGraph.DownloadDetailScreen.argument0) {
+                        type = NavType.StringType
+                        nullable = true
+                        defaultValue = null
+                    }
+                )
+            ) {
+                val id =
+                    it.arguments?.getString(NavScreenGraph.DownloadDetailScreen.argument0) ?: ""
+                val viewModel = koinViewModel<DownloadDetailViewModel>()
+                LaunchedEffect(id) {
+                    if (id.isNotEmpty()) {
+                        viewModel.setDownloadId(id)
+                    }
+                }
+                DownloadDetailScreen(navController, viewModel)
+            }
+
+
         }
+    }
 
 }

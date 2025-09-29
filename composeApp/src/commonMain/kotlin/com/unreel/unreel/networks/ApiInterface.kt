@@ -59,12 +59,12 @@ interface ApiInterface {
         @Header("Authorization") token: String,
     ): GetDownloadsResponse
 
-//    @Headers("Content-Type: application/json")
-//    @GET("engine/downloads/:id")
-//    suspend fun getOneDownload(
-//        @Header("Authorization") token: String,
-//        @Path("id") id: String,
-//    ): DownloadItem
+    @Headers("Content-Type: application/json")
+    @GET("engine/{id}")
+    suspend fun getOneDownload(
+        @Header("Authorization") token: String,
+        @Path("id") id: String,
+    ): DownloadItem
 }
 
 @Serializable
