@@ -91,7 +91,7 @@ fun LoginScreenContent(
     val coroutineScope = rememberCoroutineScope()
 
     val darkNavyBlue = Color(0xFF1A2332)
-    
+
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -135,9 +135,9 @@ fun LoginScreenContent(
                     )
                     .padding(12.dp)
             )
-            
+
             Spacer(modifier = Modifier.height(8.dp))
-            
+
             Text(
                 text = "Save",
                 color = Color.White,
@@ -174,19 +174,19 @@ fun LoginScreenContent(
                     fontWeight = FontWeight.Bold
                 )
             }
-            
+
             Spacer(modifier = Modifier.height(40.dp))
-            
+
             Text(
-                text = "Welcome to SparkReel",
+                text = "Welcome to Unreel",
                 color = Color.White,
                 fontSize = 28.sp,
                 fontWeight = FontWeight.Bold,
                 textAlign = TextAlign.Center
             )
-            
+
             Spacer(modifier = Modifier.height(12.dp))
-            
+
             Text(
                 text = "Sign in with your Google account to continue",
                 color = Color(0xFF9CA3AF),
@@ -194,9 +194,9 @@ fun LoginScreenContent(
                 textAlign = TextAlign.Center,
                 lineHeight = 24.sp
             )
-            
+
             Spacer(modifier = Modifier.height(60.dp))
-            
+
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -247,9 +247,9 @@ fun LoginScreenContent(
                                 )
                                 .wrapContentSize(Alignment.Center)
                         )
-                        
+
                         Spacer(modifier = Modifier.width(12.dp))
-                        
+
                         Text(
                             text = "Continue with Google",
                             color = Color.White,

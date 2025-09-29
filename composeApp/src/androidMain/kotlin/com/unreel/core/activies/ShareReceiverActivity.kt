@@ -10,14 +10,9 @@ import androidx.work.WorkManager
 import androidx.work.WorkerParameters
 import androidx.work.workDataOf
 import com.unreel.unreel.core.datastore.OfflineRepository
-import com.unreel.unreel.core.shares.ShareHandler
 import com.unreel.unreel.networks.repository.RemoteRepository
 import kotlinx.coroutines.flow.firstOrNull
-import kotlinx.coroutines.runBlocking
-import org.koin.android.ext.android.inject
-import org.koin.compose.getKoin
 import org.koin.core.context.GlobalContext
-import kotlin.getValue
 
 class ShareReceiverActivity : ComponentActivity() {
 
